@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<%- include("../partials/head.ejs") %>
+
+<style>
+    #center {
+        margin: auto;
+        width: 60%;
+    }
+
+    #song-info {
+        margin: auto;
+        width: 60%;
+
+        padding: 1%;
+
+        text-align: center;
+    }
+
+    #song-info > * {
+        margin: 1%;
+    }
+
+    #player {
+        margin-top: 1%;
+        background-color: black;
+    }
+
+    #video {
+        width: 100%;
+        height: auto;
+    }
+
+    #guess-title {
+        padding-top: 2%;
+        width: 60%;
+        margin: auto;
+    }
+
+    #input-title {
+        width: 100%;
+
+        padding-top: 1%;
+        padding-bottom: 1%;
+
+        font-size: medium;
+        text-align: center;
+    }
+
+    #title-suggestions {
+        width: 100%;
+        max-height: 10%;
+        overflow-y: scroll;
+
+        text-align: center;
+
+        border-color: grey;
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 1px;
+    }
+
+    .title-suggestion {
+        font-size: small;
+        margin: 0%;
+        padding-top: 1%;
+        padding-bottom: 1%;
+    }
+
+    .mouseover {
+        background-color: lavender;
+    }
+
+    .hidden {
+        visibility: hidden;
+    }
+
+    .display-none {
+        display: none;
+    }
+
+    .correct {
+        background-color: greenyellow;
+    }
+
+    .incorrect {
+        background-color: lightcoral;
+    }
+
+</style>
+
+<body>
+    
+    <%- include("../partials/nav.ejs") %>
+
+    <div id="center">
+        <div id="song-info" class="display-none">
+            <h2><%= song.animeTitles[0] %></h2>
+            <div id="anime-titles" class="display-none">
+                <% for(let n = 0; n < song.animeTitles.length; ++n) { %>
+                    <p><%= song.animeTitles[n] %></p>
+                <% } %>
+            </div>
+            <h3><%= song.title %></h3>
+            <h4><%= song.artists %></h4>
+            <h4><%= song.type %></h4>
+        </div>
+        <div id="player">
+            <video id="video" class="hidden" src="<%= song.link %>" type="video/webm" autoplay></video>
+        </div>
+        <div id="guess-title">
+            <input id="input-title" type="text" placeholder="Anime name" autofocus>
+            <div id="title-suggestions" class="hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const guessInput = document.querySelector('#input-title');
+
+        guessInput.addEventListener('keydown', event => {
+            if(event.keyCode == 13){
+                const songInfo = document.querySelector('#song-info');
+                songInfo.classList.remove('display-none');
+
+                const animeTitles = document.querySelectorAll('#anime-titles > p');
+
+                let found = false;
+                for (const animeTitle of animeTitles) {
+                    if(animeTitle.innerText == event.target.value) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if(found) {
+                    songInfo.classList.add('correct');
+                } else {
+                    songInfo.classList.add('incorrect');
+                }
+
+                const video = document.querySelector('#video');
+                video.classList.remove('hidden');
+
+                const inputTitle = document.querySelector('#input-title');
+                inputTitle.readOnly = true;
+
+                const suggestions = document.querySelector('#title-suggestions');
+                suggestions.classList.add('hidden');
+                suggestions.innerHTML = "";
+            }
+        });
+
+        guessInput.addEventListener('input', event => {
+            const suggestions = document.querySelector('#title-suggestions');
+
+            if(event.target.value.length == 0)
+            {
+                suggestions.classList.add('hidden');
+                return;
+            }
+            suggestions.classList.remove('hidden');
+            suggestions.innerHTML = "";
+
+            const endpoint = `/songs/${event.target.value}`;
+
+            fetch(endpoint, { method: "GET" })
+                .then(res => res.json())
+                .then(data => {
+                    data.titles.forEach(element => {
+                        const suggestion = document.createElement('p');
+                        suggestion.addEventListener('click', event => {
+                            guessInput.value = event.target.id;
+                        });
+                        suggestion.addEventListener('mouseover', event => {
+                            event.target.classList.add('mouseover');
+                        });
+                        suggestion.addEventListener('mouseleave', event => {
+                            event.target.classList.remove('mouseover');
+                        });
+                        suggestion.id = element;
+                        suggestion.textContent = element;
+                        suggestion.classList.add('title-suggestion');
+                        suggestions.appendChild(suggestion);
+                    });
+                })
+                .catch(err => console.log(err));
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<%- include("../partials/head.ejs") %>
+
+<body>
+    
+    <%- include("../partials/nav.ejs") %>
+
+    <h1>All the songs:</h1>
+
+    <% songs.forEach(song => { %>
+        <a href="/songs/details/<%= song.title %>"><%= song.title %> - <%= song.animeTitles[0] %></a><br>
+    <% }); %>
+
+</body>
+</html>

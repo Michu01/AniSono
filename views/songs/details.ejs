@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<%- include("../partials/head.ejs") %>
+
+<body>
+
+    <%- include("../partials/nav.ejs") %>
+
+    <h1>Song title:</h1>
+    <h2><%= song.title %></h2>
+    <h1>Anime title:</h1>
+    <h2><%= song.animeTitles[0] %></h2>
+    <% if (song.animeTitles.length > 1) { %>
+        <h2>Aliases:</h2>
+        <% for (let n = 1; n < song.animeTitles.length; ++n) { %>
+            <h3><%= song.animeTitles[n] %></h3>
+        <% } %>
+    <% } %>
+    <% if (song.artists.length == 1) { %>
+        <h1>Artist:</h1>
+        <h2><%= song.artists[0] %></h2>
+    <% } else { %>
+        <h1>Artists:</h1>
+        <% for(let n = 0; n < song.artists.length; ++n) { %>
+            <h2><%= song.artists[n] %></h2>
+        <% } %>
+    <% } %>
+    <h2>Type:</h2>
+    <h3><%= song.type %></h3>
+    <h2>Link:</h2>
+    <a href="<%= song.link %>"><h3><%= song.link %></h3></a>
+
+    <button id="delete" data-title="<%= song.title %>">Delete</button>
+
+    <script>
+        const deleteSong = document.querySelector('#delete');
+
+        deleteSong.addEventListener('click', event => {
+            const endpoint = `/songs/${deleteSong.dataset.title}`;
+            fetch(endpoint, { method: "DELETE"})
+                .then(res => res.json())
+                .then(data => window.location.href = data.redirect)
+                .catch(err => console.log(err));
+        });
+
+    </script>
+
+</body>
+</html>

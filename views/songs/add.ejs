@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<%- include("../partials/head.ejs") %>
+
+<body>
+    
+    <%- include("../partials/nav.ejs") %>
+
+    <div>
+        <h3>Get info about song/anime from</h3>
+        <a href="https://myanimelist.net/">My Anime List</a>
+    </div>
+
+    <div>
+        <h3>Get links to anime videos from</h3>
+        <a href="https://themes.moe/">Themes.moe</a>
+        <h3>Link to video must look like this:</h3>
+        <a href="https://animethemes.moe/video/TokyoGhoul-OP1.webm">https://animethemes.moe/video/TokyoGhoul-OP1.webm</a>
+    </div>
+
+    <br>
+
+    <div>
+        <button id="add-title">Add Alternative Title</button>
+    </div>
+
+    <br>
+
+    <div>
+        <button id="add-artist">Add Another Artist</button>
+    </div>
+
+    <br>
+
+    <div>
+        <form action="/songs/add" method="POST">
+            <label>Anime Title (Use title from MAL):</label><br>
+            <div id="anime-titles">
+                <input type="text" name="animeTitles" required>
+            </div>
+            <label>Anime link:</label><br>
+            <input type="text" name="link"><br>
+            <label>Song Title (Use title from MAL):</label><br>
+            <input type="text" name="title" required><br>
+            <label for="type">Song Type (Opening 1/Ending 2/Insert 3/etc.):</label><br>
+            <input type="text" name="type" required><br>
+            <label for="artist">Song Artist:</label><br>
+            <div id="song-artists">
+                <input type="text" name="artists" required>
+            </div>
+            <br>
+            <button>Submit</button>
+        </form>
+    </div>
+
+    <script>
+
+        const addTitle = document.querySelector('#add-title');
+
+        addTitle.addEventListener('click', event => {
+            const inputTitle = document.createElement('input');
+            inputTitle.type = "text";
+            inputTitle.name = "animeTitles";
+            const animeTitles = document.querySelector('#anime-titles');
+            animeTitles.append(inputTitle);
+        });
+
+        const addArtist = document.querySelector('#add-artist');
+
+        addArtist.addEventListener('click', event => {
+            const inputArtist = document.createElement('input');
+            inputArtist.type = "text";
+            inputArtist.name = "artists";
+            const artists = document.querySelector('#song-artists');
+            artists.append(inputArtist);
+        });
+
+    </script>
+
+</body>
+</html>
